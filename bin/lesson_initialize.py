@@ -273,7 +273,7 @@ FIXME
 ROOT_SETUP_MD = '''\
 ---
 layout: page
-title: Setup
+title: 准备事项
 permalink: /setup/
 ---
 FIXME

@@ -1,101 +1,99 @@
 ---
-title: "Permissions"
+title: "权限控制"
 teaching: 10
 exercises: 0
 questions:
-- "Understanding file/directory permissions"
+- "文件目录的权限是什么？"
+- "怎么样查看权限？"
+- "怎么样改变权限？"
 objectives:
-- "What are file/directory permissions?"
-- "How to view permissions?"
-- "How to change permissions?"
-- "File/directory permissions in Windows"
+- "理解文件和目录的权限"
+- "改变文件目录的权限"
 keypoints:
-- "Correct permissions are critical for the security of a system." 
-- "File permissions describe who and what can read, write, modify, and access a file."
-- "Use `ls -l` to view the permissions for a specific file." 
-- "Use `chmod` to change permissions on a file or directory."
+- "正确的权限对于系统的安全性至关重要。" 
+- "文件权限描述了可以读取、写入、修改和访问文件的人员和对象。"
+- "使用 `ls -l` 查看特定文件的权限。" 
+- "使用 `chmod` 更改文件或目录的权限。"
 ---
 
-Unix controls who can read, modify, and run files using *permissions*.
-We'll discuss how Windows handles permissions at the end of the section:
-the concepts are similar,
-but the rules are different.
+Linux 使用 *permissions* 控制谁可以读取、修改和运行文件。
+我们将在本节末尾讨论 Windows 如何处理权限：
+概念相似，
+但规则不同。
 
-Let's start with Nelle.
-She has a unique [user name]({{ page.root }}/reference/{{ site.index }}#user-name),
+让我们从内尔开始。
+她有一个唯一的 [用户名]({{ page.root }}/reference/{{ site.index }}#user-name)，
 `nnemo`,
-and a [user ID]({{ page.root }}/reference/{{ site.index }}#user-id),
+和 [用户 ID]({{ page.root }}/reference/{{ site.index }}#user-id)，
 1404.
 
-> ## Why Integer IDs?
+> ## 为什么是整数ID？
 >
-> Why integers for IDs?
-> Again, the answer goes back to the early 1970s.
-> Character strings like `alan.turing` are of varying length,
-> and comparing one to another takes many instructions.
-> Integers,
-> on the other hand,
-> use a fairly small amount of storage (typically four characters),
-> and can be compared with a single instruction.
-> To make operations fast and simple,
-> programmers often keep track of things internally using integers,
-> then use a lookup table of some kind
-> to translate those integers into user-friendly text for presentation.
-> Of course,
-> programmers being programmers,
-> they will often skip the user-friendly string part
-> and just use the integers,
-> in the same way that someone working in a lab might talk about Experiment 28
-> instead of "the chronotypical alpha-response trials on anacondas".
+> 为什么使用整数作为ID？
+> 同样，答案可以追溯到197 年代初期。
+> 像 `alan.turing` 这样的字符串长度不同，
+> 相互比较需要很多说明。
+> 整数，
+> 另一方面，
+> 使用相当少量的存储空间（通常是四个字符），
+> 并且可以与单个指令进行比较。
+> 为了使操作快速简单，
+> 程序员经常使用整数在内部跟踪事物，
+> 然后使用某种查找表
+> 将这些整数转换为用户友好的文本以进行演示。
+> 当然，
+> 程序员就是程序员，
+> 他们经常会跳过用户友好的字符串部分
+> 并且只使用整数。
 {: .callout}
 
-Users can belong to any number of [groups]({{ page.root }}/reference/{{ site.index }}#user-group),
-each of which has a unique [group name]({{ page.root }}/reference/{{ site.index }}#user-group-name)
-and numeric [group ID]({{ page.root }}/reference/{{ site.index }}#user-group-id).
-The list of who's in what group is usually stored in the file `/etc/group`.
-(If you're in front of a Unix machine right now,
-try running `cat /etc/group` to look at that file.)
+用户可以属于任意数量的[组]({{ page.root }}/reference/{{ site.index }}#user-group)，
+每个都有一个唯一的 [组名]({{ page.root }}/reference/{{ site.index }}#user-group-name)
+和数字 [组 ID]({{ page.root }}/reference/{{ site.index }}#user-group-id)。
+属于哪个组的人员列表通常存储在文件“/etc/group”中。
+（如果你现在在一台 Unix 机器前，
+尝试运行 `cat /etc/group` 来查看该文件。）
 
-Now let's look at files and directories.
-Every file and directory on a Unix computer belongs to one owner and one group.
-Along with each file's content,
-the operating system stores the numeric IDs of the user and group that own it.
+现在让我们看看文件和目录。
+Unix 计算机上的每个文件和目录都属于一个所有者和一个组。
+随着每个文件的内容，
+操作系统存储拥有它的用户和组的数字 ID。
 
-The user-and-group model means that
-for each file
-every user on the system falls into one of three categories:
-the owner of the file,
-someone in the file's group,
-and everyone else.
+用户和组模型意味着
+对于每个文件
+系统上的每个用户都属于以下三类之一：
+文件的所有者，
+文件组中的某个人，
+和其他所有人。
 
-For each of these three categories,
-the computer keeps track of
-whether people in that category can read the file,
-write to the file,
-or execute the file
-(i.e., run it if it is a program).
+对于这三个类别中的每一个，
+计算机跟踪
+该类别的人是否可以阅读该文件，
+写入文件，
+或执行文件
+（即，如果它是一个程序，则运行它）。
 
-For example, if a file had the following set of permissions:
+例如，如果文件具有以下权限集：
 
 <table class="table table-striped">
-<tr><td></td><th>user</th><th>group</th><th>all</th></tr>
-<tr><th>read</th><td>yes</td><td>yes</td><td>no</td></tr>
-<tr><th>write</th><td>yes</td><td>no</td><td>no</td></tr>
-<tr><th>execute</th><td>no</td><td>no</td><td>no</td></tr>
+<tr><td></td><th>用户</th><th>组</th><th>所有</th></tr>
+<tr><th>读</th><td>yes</td><td>yes</td><td>no</td></tr>
+<tr><th>写</th><td>yes</td><td>no</td><td>no</td></tr>
+<tr><th>执行</th><td>no</td><td>no</td><td>no</td></tr>
 </table>
 
-it would mean that:
+这意味着：
 
-*   the file's owner can read and write it, but not run it;
-*   other people in the file's group can read it, but not modify it or run it; and
-*   everybody else can do nothing with it at all.
+* 文件的所有者可以读写，但不能运行；
+* 文件所在组的其他人可以读取，但不能修改或运行； 和
+* 其他人对此根本无能为力。
 
-Let's look at this model in action.
-If we `cd` into the `labs` directory and run `ls -F`,
-it puts a `*` at the end of `setup`'s name.
-This is its way of telling us that `setup` is executable,
-i.e.,
-that it's (probably) something the computer can run.
+让我们看看这个模型的实际应用。
+如果我们 `cd` 进入 `labs` 目录并运行 `ls -F`，
+它在 `setup` 的名称末尾放置一个 `*`。
+这是它告诉我们 `setup` 是可执行的方式，
+IE。，
+它（可能）是计算机可以运行的东西。
 
 ~~~
 $ cd labs
@@ -107,21 +105,21 @@ safety.txt    setup*     waiver.txt
 ~~~
 {: .output}
 
-> ## Necessary But Not Sufficient
+> ## 必要但不充分
 >
-> The fact that something is marked as executable
-> doesn't actually mean it contains a program of some kind.
-> We could easily mark this HTML file as executable
-> using the commands that are introduced below.
-> Depending on the operating system we're using,
-> trying to "run" it will either fail
-> (because it doesn't contain instructions the computer recognizes)
-> or cause the operating system to open the file
-> with whatever application usually handles it
-> (such as a web browser).
+> 某些东西被标记为可执行的事实
+> 实际上并不意味着它包含某种程序。
+> 我们可以轻松地将这个 HTML 文件标记为可执行文件
+> 使用下面介绍的命令。
+> 根据我们使用的操作系统，
+> 试图“运行”它要么失败
+>（因为它不包含计算机识别的指令）
+> 或导致操作系统打开文件
+> 使用通常处理它的任何应用程序
+>（例如网络浏览器）。
 {: .callout}
 
-Now let's run the command `ls -l`:
+现在让我们运行命令“ls -l”：
 
 ~~~
 $ ls -l
@@ -134,43 +132,43 @@ $ ls -l
 ~~~
 {: .output}
 
-The `-l` flag tells `ls` to give us a long-form listing.
-It's a lot of information, so let's go through the columns in turn.
+`-l` 标志告诉 `ls` 给我们一个长列表。
+信息量很大，让我们依次浏览各栏目。
 
-On the right side, we have the files'  names.
-Next to them,
-moving left,
-are the times and dates they were last modified.
-Backup systems and other tools use this information in a variety of ways,
-but you can use it to tell when you (or anyone else with permission)
-last changed a file.
+在右侧，我们有文件的名称。
+在他们身边，
+向左移动，
+是它们最后一次修改的时间和日期。
+备份系统和其他工具以多种方式使用这些信息，
+但你可以用它来告诉你什么时候（或其他任何人）
+最后更改了一个文件。
 
-Next to the modification time is the file's size in bytes
-and the names of the user and group that owns it
-(in this case, `vlad` and `bio` respectively).
-We'll skip over the second column for now
-(the one showing `1` for each file)
-because it's the first column that we care about most.
-This shows the file's permissions, i.e., who can read, write, or execute it.
+修改时间旁边是文件的大小（以字节为单位）
+以及拥有它的用户和组的名称
+（在这种情况下，分别是 `vlad` 和 `bio`）。
+我们现在将跳过第二列
+（每个文件显示“1”的那个）
+因为这是我们最关心的第一列。
+这显示了文件的权限，即谁可以读取、写入或执行它。
 
-Let's have a closer look at one of those permission strings:
-`-rwxr-xr-x`.
-The first character tells us what type of thing this is:
-'-' means it's a regular file,
-while 'd' means it's a directory,
-and other characters mean more esoteric things.
+让我们仔细看看其中一个权限字符串：
+`-rwxr-xr-x`。
+第一个字符告诉我们这是什么类型的东西：
+'-' 表示它是一个常规文件，
+而 'd' 表示它是一个目录，
+和其他字符意味着更深奥的东西。
 
-The next three characters tell us what permissions the file's owner has.
-Here, the owner can read, write, and execute the file: `rwx`.
-The middle triplet shows us the group's permissions.
-If the permission is turned off, we see a dash, so `r-x` means "read and execute, but not write".
-The final triplet shows us what everyone who isn't the file's owner, or in the file's group, can do.
-In this case, it's 'r-x' again, so everyone on the system can look at the file's contents and run it.
+接下来的三个字符告诉我们文件所有者拥有什么权限。
+在这里，所有者可以读取、写入和执行文件：`rwx`。
+中间的三元组向我们展示了该组的权限。
+如果权限被关闭，我们会看到一个破折号，所以 `r-x` 表示“读取和执行，但不写入”。
+最后一个三元组向我们展示了不是文件所有者或文件组中的每个人都可以做什么。
+在这种情况下，它又是“r-x”，所以系统上的每个人都可以查看文件的内容并运行它。
 
-To change permissions, we use the `chmod` command
-(whose name stands for "change mode").
-Here's a long-form listing showing the permissions on the final grades
-in the course Vlad is teaching:
+要更改权限，我们使用 `chmod` 命令
+（其名称代表“更改模式”）。
+这是一个长列表，显示了最终成绩的权限
+在弗拉德教授的课程中：
 
 ~~~
 $ ls -l final.grd
@@ -182,23 +180,23 @@ $ ls -l final.grd
 ~~~
 {: .output}
 
-Whoops: everyone in the world can read it&mdash;and what's worse,
-modify it!
-(They could also try to run the grades file as a program,
-which would almost certainly not work.)
+哎呀：世界上每个人都可以阅读它——更糟糕的是，
+修改它！
+（他们也可以尝试将成绩文件作为程序运行，
+这几乎肯定行不通。）
 
-The command to change the owner's permissions to `rw-` is:
+将所有者权限更改为 `rw-` 的命令是：
 
 ~~~
 $ chmod u=rw final.grd
 ~~~
 {: .bash}
 
-The 'u' signals that we're changing the privileges
-of the user (i.e., the file's owner),
-and `rw` is the new set of permissions.
-A quick `ls -l` shows us that it worked,
-because the owner's permissions are now set to read and write:
+'u' 表示我们正在更改权限
+用户的（即文件的所有者），
+并且 `rw` 是新的权限集。
+一个快速的 `ls -l` 告诉我们它有效，
+因为所有者的权限现在设置为读写：
 
 ~~~
 $ ls -l final.grd
@@ -210,7 +208,7 @@ $ ls -l final.grd
 ~~~
 {: .output}
 
-Let's run `chmod` again to give the group read-only permission:
+让我们再次运行 `chmod` 以授予组只读权限：
 
 ~~~
 $ chmod g=r final.grd
@@ -223,8 +221,8 @@ $ ls -l final.grd
 ~~~
 {: .output}
 
-And finally,
-let's give "all" (everyone on the system who isn't the file's owner or in its group) no permissions at all:
+最后，
+让我们给“所有”（系统上不是文件所有者或不在其组中的每个人）根本没有权限：
 
 ~~~
 $ chmod a= final.grd
@@ -237,15 +235,14 @@ $ ls -l final.grd
 ~~~
 {: .output}
 
-Here,
-the 'a' signals that we're changing permissions for "all",
-and since there's nothing on the right of the "=",
-"all"'s new permissions are empty.
+这里，
+'a' 表示我们正在更改“all”的权限，
+由于“=”的右侧没有任何内容，
+“all”的新权限为空。
 
-We can search by permissions, too.
-Here, for example, we can use `-type f -perm -u=x` to find files
-that the user can execute:
-
+我们也可以按权限搜索。
+在这里，例如，我们可以使用 `-type f -perm -u=x` 来查找文件
+用户可以执行：
 ~~~
 $ find . -type f -perm -u=x
 ~~~
@@ -257,10 +254,9 @@ $ find . -type f -perm -u=x
 ~~~
 {: .output}
 
-Before we go any further,
-let's run `ls -a -l`
-to get a long-form listing that includes directory entries that are normally hidden:
-
+在我们走得更远之前，
+让我们运行`ls -a -l`
+获取包含通常隐藏的目录条目的长列表：
 ~~~
 $ ls -a -l
 ~~~
@@ -275,66 +271,66 @@ drwxr-xr-x 1 vlad bio  8192  2010-08-27 23:11 ..
 ~~~
 {: .output}
 
-The permissions for `.` and `..` (this directory and its parent) start with a 'd'.
-But look at the rest of their permissions:
-the 'x' means that "execute" is turned on.
-What does that mean?
-A directory isn't a program&mdash;how can we "run" it?
+`.` 和 `..`（此目录及其父目录）的权限以“d”开头。
+但看看他们的其余权限：
+“x”表示“执行”已打开。
+那是什么意思？
+目录不是程序——我们如何“运行”它？
 
-In fact, 'x' means something different for directories.
-It gives someone the right to *traverse* the directory, but not to look at its contents.
-The distinction is subtle, so let's have a look at an example.
-Vlad's home directory has three subdirectories called `venus`, `mars`, and `pluto`:
+事实上，“x”对于目录来说意味着不同的东西。
+它赋予某人*遍历*目录的权利，但不能查看其内容。
+区别很微妙，所以让我们看一个例子。
+Vlad 的主目录包含三个子目录，分别称为“venus”、“mars”和“pluto”：
 
-![execute]({% link fig/x-for-directories.svg %} "Execute Permission for Directories")
+![目录执行权限](../fig/x-for-directories.svg)
 
-Each of these has a subdirectory in turn called `notes`,
-and those sub-subdirectories contain various files.
-If a user's permissions on `venus` are 'r-x',
-then if she tries to see the contents of `venus` and `venus/notes` using `ls`,
-the computer lets her see both.
-If her permissions on `mars` are just 'r--',
-then she is allowed to read the contents of both `mars` and `mars/notes`.
-But if her permissions on `pluto` are only '--x',
-she cannot see what's in the `pluto` directory:
-`ls pluto` will tell her she doesn't have permission to view its contents.
-If she tries to look in `pluto/notes`, though, the computer will let her do that.
-She's allowed to go through `pluto`, but not to look at what's there.
-This trick gives people a way to make some of their directories visible to the world as a whole
-without opening up everything else.
+其中每一个都有一个子目录，依次称为“notes”，
+这些子目录包含各种文件。
+如果用户对 `venus` 的权限是 'r-x'，
+那么如果她尝试使用 `ls` 查看 `venus` 和 `venus/notes` 的内容，
+电脑让她看到两者。
+如果她对 `mars` 的权限只是 'r--'，
+然后允许她阅读`mars`和`mars/notes`的内容。
+但如果她对 `pluto` 的权限只有 '--x'，
+她看不到 `pluto` 目录中的内容：
+`ls pluto` 会告诉她她没有查看其内容的权限。
+但是，如果她试图查看“pluto/notes”，计算机会让她这样做。
+她被允许通过“冥王星”，但不能看那里有什么。
+这个技巧为人们提供了一种让他们的一些目录对整个世界可见的方法
+没有打开其他一切。
 
-## What about Windows?
+## 窗户呢？
 
-Those are the basics of permissions on Unix.
-As we said at the outset, though, things work differently on Windows.
-There, permissions are defined by [access control lists]({{ page.root }}/reference/{{ site.index }}#access-control-list),
-or ACLs.
-An ACL is a list of pairs, each of which combines a "who" with a "what".
-For example,
-you could give the Mummy permission to append data to a file without giving him permission to read or delete it,
-and give Frankenstein permission to delete a file without being able to see what it contains.
+这些是 Unix 权限的基础知识。
+但是，正如我们在一开始所说的那样，Windows 上的工作方式有所不同。
+在那里，权限由 [访问控制列表]({{ page.root }}/reference/{{ site.index }}#access-control-list) 定义，
+或 ACL。
+ACL 是一个对的列表，每个对都结合了“谁”和“什么”。
+例如，
+您可以授予木乃伊将数据附加到文件的权限，而无需授予他读取或删除文件的权限，
+并授予弗兰肯斯坦删除文件的权限，但无法查看其中包含的内容。
 
-This is more flexible that the Unix model,
-but it's also more complex to administer and understand on small systems.
-(If you have a large computer system,
-*nothing* is easy to administer or understand.)
-Some modern variants of Unix support ACLs as well as the older read-write-execute permissions,
-but hardly anyone uses them.
-
-> ## Challenge
-> If `ls -l myfile.php` returns the following details:
+这比 Unix 模型更灵活，
+但在小型系统上管理和理解也更加复杂。
+（如果您有一个大型计算机系统，
+*没有什么*易于管理或理解。）
+一些现代的 Unix 变体支持 ACL 以及旧的读写执行权限，
+但几乎没有人使用它们。
+> ## 挑战
+> 
+> 如果 `ls -l myfile.php` 返回以下详细信息：
 >
 > ~~~
 > -rwxr-xr-- 1 caro zoo  2312  2014-10-25 18:30 myfile.php
 > ~~~
 > {: .output}
 > 
-> Which of the following statements is true?
-> 
-> 1. caro (the owner) can read, write, and execute myfile.php
-> 2. caro (the owner) cannot write to myfile.php
-> 3. members of caro (a group) can read, write, and execute myfile.php
-> 4. members of zoo (a group) cannot execute myfile.php
+> 以下哪项陈述是正确的？
+>
+> 1. caro（所有者）可以读、写和执行myfile.php
+> 2. caro（所有者）无法写入 myfile.php
+> 3. caro（一个组）的成员可以读、写和执行myfile.php
+> 4. zoo（组）成员不能执行myfile.php
 {: .challenge}
 
 {% include links.md %}

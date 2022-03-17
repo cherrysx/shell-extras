@@ -1,39 +1,25 @@
 ---
 layout: page
-title: "Instructor Notes"
+title: "教学指导笔记"
 ---
 
-The instructor notes should provide additional discussion useful to instructors, 
-but not appropriate for inclusion in the main lessons. The following structure 
-provides a consistent way for instructors to both prepare for a workshop and 
-quickly find necessary information during a workshop.
+以下结构为教师提供一致的方式来准备课程和在课程期间快速找到必要的信息。
 
-Please remember not to overload on details, and to keep the comments here positive!
+请记住不要过多介绍细节，并保持此处的评论积极！
 
-## Lesson motivation and learning objectives
+## 课程动机和学习目标
 
-These concepts should be highlighted in the main lesson material, but ideas for 
-explaining these concepts further can be placed here. 
+这些概念应在主要课程材料中突出显示，但可以在这里进一步解释这些概念。
 
-## Lesson design
+## 课程设计
 
-Most lessons contain more material than can be taught in a single workshop. 
-Describe a general narrative (with time estimates) for teaching either a half day 
-or full day with this lesson material. You may also choose to include multiple 
-options for lesson design, or what material can be skipped while teaching. 
-This section may also include recommendations for how this lesson fits into 
-the overall workshop.
+大多数课程包含的材料比一个研讨会所能教授的要多。描述半天教学的一般叙述（带时间估计）或全天学习本课程材料。 您还可以选择包含多个课程设计的选项或者在教学时可以跳过哪些材料。
 
-## Technical tips and tricks
+## 技术提示和技巧
 
-Provide information on setting up your environment for learners to view your 
-live coding (increasing text size, changing text color, etc), as well as 
-general recommendations for working with coding tools to best suit the 
-learning environment.
+提供有关设置环境以供学习者查看您的环境的信息实时编码（增加文本大小，更改文本颜色等），以及使用编码工具以最适合学习环境。
 
-## Common problems
+## 常见问题
 
-This can include answers to common learner questions, as well as links to 
-resources (blog posts, stack overflow answers, etc) that may solve problems that 
-may occur during a workshop.
+这可以包括对常见学习者问题的回答，以及指向可以解决问题的资源（博客文章、堆栈溢出答案等）可能会在课程期间发生。
 

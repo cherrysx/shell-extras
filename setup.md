@@ -1,19 +1,15 @@
 ---
 layout: page
-title: Setup
+title: 准备事项
 ---
 
-## Download files
-There are no files to download for this lesson.
+## 下载文件
+本课没有可下载的文件。
 
+## 打开一个新的shell
+本课补充了[Linux Shell小白入门](https://www.yuanmadesign.com/shell1/) 中涵盖的内容。 因此，应该已经安装了本课所需的 shell 软件。
 
-## Open a new shell
-This lesson supplements material covered in the [Introduction to the Unix Shell](https://swcarpentry.github.io/shell-novice/). The shell software necessary for this lesson should therefore already be installed. 
-
-1. Open a terminal.
-2. In the terminal type `cd` then press the <kbd>Return</kbd> key.
-   This step will make sure you start with your home folder as your working directory. 
-   You can then navigate to the specific directory you want to work in or run the exercises from there. 
-
-
-[install_shell]: https://carpentries.github.io/workshop-template/#shell
+1. 打开一个终端。
+2. 在终端输入 `cd` 然后按 <kbd>Return</kbd> 键。
+   此步骤将确保您从主文件夹开始作为工作目录。
+   然后，您可以导航到要在其中工作的特定目录或从那里运行练习。

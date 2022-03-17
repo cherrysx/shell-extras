@@ -1,116 +1,98 @@
-
 ---
-title: "Transferring Files"
+title: "传输文件"
 teaching: 10
 exercises: 0
 questions:
-- "How to use wget, curl and lftp to transfer file?"
+- "如何使用 wget、curl 和 lftp 传输文件？"
 objectives:
-- "FIXME"
+- "如何使用wget下载文件"
+- "如何使用curl访问Web应用/下载文件"
+- "如何使用lftp访问Web应用/下载文件"
 keypoints:
-- "FIXME"
+- "学习wget命令的参数和下载文件的方式"
+- "学习curl命令的参数和下载文件的方式"
+- "学习lftp命令的参数和下载文件的方式"
 ---
 
-There are other ways to interact with remote files other than git.
+除了git，还有其他方法可以与远程文件进行交互。
 
-It is true that we can clone an entire git repository, or even one level of a git repository using:
-`git clone --depth-1 repository_name`.
-What about files that do not exist in a git repository? If we wish to download files from the shell
-we can use tools such as Wget, cURL, and lftp.
-
+的确，我们可以克隆整个git存储库，甚至可以使用以下命令克隆一个级别的git存储库：
+`git clone --depth-1 repository_name`。git存储库中不存在的文件怎么办？ 如果我们想从shell下载文件
+我们可以使用wget、curl 和 lftp 等工具。
 ## Wget
 
-Wget is a simple tool developed for the GNU Project that downloads files with the HTTP, HTTPS and FTP protocols. It is widely used by Unix-like users and is available with most Linux distributions.
+Wget 是一个为GNU项目开发的简单工具，它使用HTTP、HTTPS 和FTP协议下载文件。 它被用户广泛使用，并且可用于大多数Linux发行版。
 
-To download this lesson (located at https://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html) from the web via HTTP we can simply type:
+要通过HTTP从Web下载本课程（位于https://www.yuanmadesign.com/shell2/03-file-transfer/index.html），我们只需输入：
 
 ~~~
-$ wget https://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
+$ wget https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
 ~~~
 {: .bash}
 
 ~~~
---2021-05-29 02:12:18—  
-https://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
-Resolving carpentries-incubator.github.io (carpentries-incubator.github.io)... 185.199.111.153, 185.199.110.153, 185.199.109.153, ...
-Connecting to carpentries-incubator.github.io (carpentries-incubator.github.io)|185.199.111.153|:443... connected.
+--2022-03-17 16:20:07--  https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
+Resolving www.yuanmadesign.com (www.yuanmadesign.com)... 175.24.122.92
+Connecting to www.yuanmadesign.com (www.yuanmadesign.com)|175.24.122.92|:443... connected.
 HTTP request sent, awaiting response... 200 OK
-Length: 22467 (22K) [text/html]
+Length: 14431 (14K) [text/html]
 Saving to: ‘index.html’
-index.html        100%[===================>]  21.94K  --.-KB/s    in 0.003s  
 
-2021-05-29 02:12:19 (6.35 MB/s) - ‘index.html’ saved [22467/22467]
+100%[=====================================================================================================>] 14,431      --.-K/s   in 0.08s
+
+2022-03-17 16:20:09 (172 KB/s) - ‘index.html’ saved [14431/14431]
 ~~~
 {: .output}
 
-Alternatively, you can add more options, which are in the form:
+或者，您可以添加更多参数选项，其形式为：
 
 ~~~
 wget -r -np -D domain_name target_URL
 ~~~
 {: .bash}
 
-where `-r` means recursively crawl to other files and directories, `-np` means avoid crawling to parent directories, and `-D` means to target only the following domain name
+其中 -r 表示递归爬取到其他文件和目录，-np 表示避免爬到父目录， -D表示仅针对以下域名
 
-For our URL it would be:
-
-~~~
-$ wget -r -np -D software-carpentry.org http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
-~~~
-{: .bash}
-
-To restrict retrieval to a particular extension(s)
-we can use the `-A` option followed by a comma separated list:
+对于我们的URL，它将是：
 
 ~~~
-wget -r -np -D software-carpentry.org -A html http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
+$ wget -r -np -D yuanmadesign.com https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
 ~~~
 {: .bash}
 
-We can also clone a webpage with its local dependencies:
+将检索限制为特定的扩展名我们可以使用 `-A` 选项后跟逗号分隔的列表：
+
+~~~
+wget -r -np -D yuanmadesign.com -A html https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
+~~~
+{: .bash}
+
+我们还可以克隆具有本地依赖项的网页：
 
 ~~~
 $ wget -mkq target_URL
 ~~~
 {: .bash}
 
-We could also clone the entire website:
+如果我们不想为网站内容创建子目录，请添加 `-nH` 选项：
 
-~~~
-$ wget -mkq -np -D domain_name domain_name_URL
-~~~
-{: .bash}
-
-and add the `-nH` option if we do not want a subdirectory created for the websites content:
-
-e.g.
+例如：
 
 ~~~
 $ wget -mkq -np -nH -D example.com http://example.com
 ~~~
 {: .bash}
 
-where:
-
-`-m` is for mirroring with time stamping, infinite recursion depth, and preservation of FTP directory settings
-`-k` converts links to make them suitable for local viewing 
-`-q` supresses the output to the screen
-
-The above command can also save the clone the contents of one domain to another
-if we are using ssh or sshfs to access a webserver. 
- 
-Please refer to the man page by typing `man wget` in the shell for more information.
+`-m` 用于带有时间戳、无限递归深度和保存 FTP 目录设置的镜像
+`-k` 转换链接以使其适合本地查看
+`-q` 禁止输出到屏幕
   
 ## cURL
 
-Alternatively, we can use `cURL`.
-It supports a much larger range of protocols including common mail based protocols like pop3 and smtp. 
-
-To download this lesson (located at http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html)
-from the web via HTTP we can simply type:
+或者，我们可以使用 `cURL`。它支持更大范围的协议，包括基于普通邮件的协议，如pop3和smtp。
 
 ~~~
-$ curl -o index.html http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
+$ curl -o index.html https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
 ~~~
 {: .bash}
 
@@ -121,83 +103,76 @@ $ curl -o index.html http://carpentries-incubator.github.io/shell-extras/03-file
 ~~~
 {: .output}
 
-This input to curl is in the form:
+curl的输入格式为：
 
 ~~~
 curl -o filename_for_local_machine target_url
 ~~~
 {: .bash}
 
-where the `-o` option says write the output to a file instead of the stdout (the screen),
-and file_name_for_local_machine is any file name you choose to save to the local machine,
-and target_URL is where the file is the URL where the file is on the web
+其中 `-o` 选项表示将输出写入文件而不是标准输出（屏幕），并且 file_name_for_local_machine 是您选择保存到本地机器的任何文件名，
+target_URL 是文件的位置，即文件在网络上的 URL
 
-Removing the `-o` option, and following the syntax `curl target_URL`
-outputs the contents of the url to the screen.
-If we wanted to enhance the functionality we have we could use information from the pipes and filters section,
-which is lesson 4 from the unix shell session.
+删除 `-o` 选项，并遵循语法 `curl target_URL`将 url 的内容输出到屏幕。如果我们想增强我们拥有的功能，我们可以使用管道和过滤器部分的信息。
 
-For example, we could type
-`curl http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html | grep curl`
-which would tell us that indeed this URL contains the string curl.
-We could make the output cleaner by limiting the output of curl to just the file contents by using the `-s` option
-(e.g. `curl -s http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html | grep curl`). 
+例如，我们可以输入
+`curl https://www.yuanmadesign.com/shell2/03-file-transfer/index.html | grep 卷曲`
+这会告诉我们这个 URL 确实包含字符串 curl。
+我们可以通过使用 `-s` 选项将 curl 的输出限制为文件内容来使输出更清晰
+（例如`curl -s https://www.yuanmadesign.com/shell2/03-file-transfer/index.html | grep curl`）。
 
-If we wanted only the text and not the html tags in our output we could use html to text parser such as `html2text`.
+如果我们只想要输出中的文本而不是 html 标签，我们可以使用 html 到文本解析器，例如 `html2text`。
 
 ~~~
-$ curl -s http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html | html2text | grep curl
+$ curl -s https://www.yuanmadesign.com/shell2/03-file-transfer/index.html | html2text | grep curl
 ~~~
 {: .bash}
 
-With `wget`, we can obtain the same results by typing:
+使用 `wget`，我们可以通过键入以下内容获得相同的结果：
 
 ~~~
-$ wget -q -D swcarpentry.github.io -O /dev/stdout http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html | html2text | grep curl
+$ wget -q -D swcarpentry.github.io -O /dev/stdout https://www.yuanmadesign.com/shell2/03-file-transfer/index.html | html2text | grep curl
 ~~~
 {: .bash}
 
-`Wget` offers more functionality natively than `curl` for retrieving entire directories.
-We could use `Wget` to first retrieve an entire directory and then run `html2text` and `grep`
-to find a particular string.
-`cURL` is limited to retrieving one or more specified URLs that cannot be obtained by recursively crawling a directory.
-The situation may be improved by combining with other unix tools, but is not thought as being as good as `Wget`.
+`Wget` 提供了比 `curl` 更多的功能来检索整个目录。我们可以使用 `Wget` 首先检索整个目录，然后运行 `html2text` 和 `grep`找到一个特定的字符串。
+`cURL` 仅限于检索一个或多个无法通过递归爬取目录获得的指定 URL。这种情况可以通过与其他 unix 工具结合使用来改善，但不如 `Wget` 好。
 
-Please refer to the man pages by typing `man wget`, `man curl`, and `man html2text` in the shell for more information. 
+请通过在 shell 中键入 `man wget`、`man curl` 和 `man html2text` 来参考手册页以获取更多信息。 
 
 ## lftp
 
-Another option is `lftp`. It has a lot of capability, and even does simple bittorrent. 
+另一个选项是“lftp”。 它有很多功能，甚至可以做简单的bittorrent。
 
-If we want to retrieve `index.html` on the website and save it with the filename `index.html` locally:
-
-~~~
-$ lftp -c get http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
-~~~
-{: .bash}
-
-If we want to print `.html` to the screen instead:
+如果我们想在网站上检索 `index.html` 并在本地以文件名 `index.html` 保存它：
 
 ~~~
-$ lftp -c cat http://carpentries-incubator.github.io/shell-extras/03-file-transfer/index.html
+$ lftp -c get https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
 ~~~
 {: .bash}
 
-To obtain retrive all of the files with a particular extension in a directory we can type:
+如果我们想将 `.html` 打印到屏幕上：
+
+~~~
+$ lftp -c cat https://www.yuanmadesign.com/shell2/03-file-transfer/index.html
+~~~
+{: .bash}
+
+要检索目录中具有特定扩展名的所有文件，我们可以键入：
 
 ~~~
 $ lftp -c mget {URL for directory}/*.extension_name
 ~~~
 {: .bash}
 
-For example, to retrieve all of the `.html` files in the extras folder:
+例如，要检索 extras 文件夹中的所有 `.html` 文件：
 
 ~~~
-$ lftp -c mget http://carpentries-incubator.github.io/shell-extras/*.html
+$ lftp -c mget https://www.yuanmadesign.com/shell2/03-file-transfer/*.html
 ~~~
 {: .bash}
 
-Please refer to the man page by typing `man lftp` in the shell for more information.
+请通过在 shell 中键入“man lftp”来参考手册页以获取更多信息。
 
 {% include links.md %}
 
